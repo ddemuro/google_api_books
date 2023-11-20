@@ -11,7 +11,7 @@ def print_rating():
             print(f"Looking up {d}")
             rating = -1
             try:
-                with open(f"{root}/{d}/book_data.json", "r",
+                with open(f"{root}/{d}/average_auth_rating.txt", "r",
                             encoding='utf-8') as f:
                     rating = f.read()
             except:
