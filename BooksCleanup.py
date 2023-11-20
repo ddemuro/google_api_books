@@ -51,10 +51,33 @@ def calculate_average_of_books(books):
                 pass
 
         # Calculate average rating
+        if len(average_rating) == 0:
+            return -1
         average_rating = sum(average_rating) / len(average_rating)
         return average_rating
     except Exception as e:
-        return -1, e.message
+        return -1, e
+
+
+def should_reprocess(file):
+    """Check if file should be reprocessed"""
+    # Check if file exists
+    if not os.path.exists(file):
+        return True
+
+    # Check if file is not a number
+    try:
+        with open(file, "r") as f:
+            file = f.read()
+            # Retry rate limit exceeded
+            if "RATE_LIMIT_EXCEEDED" in file:
+                return True
+            # Dont retry if error... likley not found
+            if "Error" in file:
+                return False
+    except:
+        return True
+    return True
 
 
 def lookup_in_folder():
@@ -68,6 +91,10 @@ def lookup_in_folder():
                 continue
             else:
                 print(f"Looking up {d}")
+                # If quota exceeded, skip, otherwise continue
+                if not should_reprocess(f"{root}/{d}/book_data.json"):
+                    print(f"Skipping {d}")
+                    continue
                 book_data, error = get_author_information(d)
                 if book_data:
                     average_rating = calculate_average_of_books(book_data)
