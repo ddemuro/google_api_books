@@ -24,7 +24,7 @@ def get_author_information(author):
 
         # send a request and get a JSON response
         url_to_send = f"{URL}{author}&printType=books{BOOKSAPI}"
-        print(url_to_send)
+        # print(url_to_send)
         # Add referrer to request
         # req = urllib.request.Request(url_to_send, )
         resp = requests.get(url_to_send,
@@ -44,7 +44,7 @@ def calculate_average_of_books(books):
         average_rating = []
         for book in books['items']:
             try:
-                print(book['volumeInfo']['averageRating'])
+                # print(book['volumeInfo']['averageRating'])
                 # Store average rating
                 average_rating.append(book['volumeInfo']['averageRating'])
             except:
@@ -76,8 +76,8 @@ def should_reprocess(file):
             if "Error" in file:
                 return False
     except:
-        return True
-    return True
+        return False
+    return False
 
 
 def lookup_in_folder():
@@ -87,13 +87,13 @@ def lookup_in_folder():
             if skip:
                 continue
             if d in FILES_FOLDERS_TO_SKIP:
-                print(f"Skipping {d}")
+                #print(f"Skipping {d}")
                 continue
             else:
                 print(f"Looking up {d}")
                 # If quota exceeded, skip, otherwise continue
                 if not should_reprocess(f"{root}/{d}/book_data.json"):
-                    print(f"Skipping {d}")
+                    #print(f"Skipping {d}")
                     continue
                 book_data, error = get_author_information(d)
                 if book_data:
