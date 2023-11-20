@@ -3,10 +3,13 @@ import requests
 import os
 
 
-#URL = 'https://www.googleapis.com/books/v1/volumes?q=inauthor:emily+henry&printType=books&langRestrict=en&key=mykey'
+# URL = 'https://www.googleapis.com/books/v1/volumes?q=inauthor:emily+henry&printType=books&langRestrict=en&key=mykey'
 URL = 'https://www.googleapis.com/books/v1/volumes?q=inauthor:'
-BOOKSAPI = '&key='
-DIR_WITH_BOOKS = '/zraid/derek-data/docker/derek-docker-data/audiobookshelf/audiobooks/AudioBooks'
+KEY = os.getenv('KEY')
+BOOKSAPI = f'&key={KEY}'
+
+# DIR_WITH_BOOKS = '/zraid/derek-data/docker/derek-docker-data/audiobookshelf/audiobooks/AudioBooks'
+DIR_WITH_BOOKS = '/home/ddemuro/google_api_books/test/'
 FILES_FOLDERS_TO_SKIP = ["Star", "star", "quantum"]
 
 
@@ -40,9 +43,12 @@ def calculate_average_of_books(books):
     try:
         average_rating = []
         for book in books['items']:
-            print(book['volumeInfo']['averageRating'])
-            # Store average rating
-            average_rating.append(book['volumeInfo']['averageRating'])
+            try:
+                print(book['volumeInfo']['averageRating'])
+                # Store average rating
+                average_rating.append(book['volumeInfo']['averageRating'])
+            except:
+                pass
 
         # Calculate average rating
         average_rating = sum(average_rating) / len(average_rating)
@@ -53,17 +59,7 @@ def calculate_average_of_books(books):
 
 def lookup_in_folder():
     skip = False
-    for subdir, dirs, files in os.walk(DIR_WITH_BOOKS):
-        if len(dirs) > 0:
-            print("Skipping subfolders")
-            skip = True
-            continue
-
-        if len(files) == 0:
-            print("Skipping empty folder")
-            skip = True
-            continue
-
+    for root, dirs, files in os.walk(DIR_WITH_BOOKS):
         for d in dirs:
             if skip:
                 continue
@@ -77,11 +73,15 @@ def lookup_in_folder():
                     average_rating = calculate_average_of_books(book_data)
                     print(f"Average rating for {d} is {average_rating}")
                     # Write rating to file in folder
-                    with open(f"{subdir}/{d}_average_auth_rating.txt", "w",
-                              encoding='utf-8') as f:
+                    with open(f"{root}/{d}/average_auth_rating.txt", "w",
+                                encoding='utf-8') as f:
                         f.write(str(average_rating))
-                    with open(f"{subdir}/{d}_book_data.json", "w",
-                              encoding='utf-8') as f:
+                    with open(f"{root}/{d}/book_data.json", "w",
+                                encoding='utf-8') as f:
                         json.dump(book_data, f)
                 else:
                     print(f"Could not find {d}")
+        break
+
+
+lookup_in_folder()
