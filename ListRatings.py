@@ -13,9 +13,12 @@ def print_rating():
                 with open(f"{root}/{d}/average_auth_rating.txt", "r",
                             encoding='utf-8') as f:
                     rating = f.read()
+                    if "Error" in rating:
+                        rating = -1
             except:
                 pass
-            print(f"{d}, {rating}")
+            if rating != -1:
+                print(f"{d}, {rating}")
         break
 
 
