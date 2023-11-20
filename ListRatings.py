@@ -8,7 +8,6 @@ def print_rating():
         if len(files) == 0:
             continue
         for d in dirs:
-            print(f"Looking up {d}")
             rating = -1
             try:
                 with open(f"{root}/{d}/average_auth_rating.txt", "r",
